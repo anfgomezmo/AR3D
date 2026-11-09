@@ -18,9 +18,9 @@
   },
   "videoSettings": {
     "video-scale": "1",
-    "video-position-x": "0",
-    "video-position-y": "0",
-    "video-position-z": "0",
+    "video-position-x": "0.24",
+    "video-position-y": "0.25",
+    "video-position-z": "0.56",
     "video-rotation-x": "0",
     "video-rotation-y": "0",
     "video-rotation-z": "0"
@@ -31,13 +31,13 @@
   "videos": [
     {
       "fileName": "video_1.mp4",
-      "name": "Boku wa... (Boku no Kokoro no Yabai Yatsu Season 2 OP1 v1) · AnimeThemes.mp4",
+      "name": "Nisshin Seifun - 近藤 勝也 _ Studio Ghibli _Konyara_ commercial (2012).mp4",
       "settings": {
         "scale": 1,
         "position": {
-          "x": 0,
-          "y": 0,
-          "z": 0
+          "x": 0.24,
+          "y": 0.25,
+          "z": 0.56
         },
         "rotation": {
           "x": 0,
@@ -48,5 +48,5 @@
     }
   ],
   "videoFileName": "video_1.mp4",
-  "videoName": "Boku wa... (Boku no Kokoro no Yabai Yatsu Season 2 OP1 v1) · AnimeThemes.mp4"
+  "videoName": "Nisshin Seifun - 近藤 勝也 _ Studio Ghibli _Konyara_ commercial (2012).mp4"
 }
