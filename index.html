@@ -1,48 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experiencia de Realidad Aumentada</title>
+    <title>Mi Producto 3D - Vista tipo Amazon</title>
+
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100svh;
+            padding: 16px;
+            box-sizing: border-box;
+            background-color: #f5f5f7;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        model-viewer {
+            position: relative;
+            width: min(90vw, 1000px);
+            height: min(78vh, 760px);
+            min-height: 320px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .ar-help,
+        #status {
+            max-width: 1000px;
+            margin: 12px auto 0;
+            color: #333;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        #status {
+            min-height: 1.5em;
+            font-weight: bold;
+        }
+
+        #ar-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 14px 20px;
+            background-color: #ff9900;
+            border: none;
+            border-radius: 8px;
+            color: #111111;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #ar-button:active {
+            background-color: #e68a00;
+        }
+    </style>
 </head>
 <body>
-    <div id="ra-free-root"></div>
+    <p class="ar-help">
+        Para probar AR, publica esta página y ábrela desde una dirección HTTPS en Chrome para Android.
+        El teléfono debe ser compatible con ARCore y tener actualizadas las aplicaciones de Google y
+        Servicios de Google Play para RA. Abrir el archivo directamente no permite iniciar AR.
+    </p>
+    <model-viewer
+        id="product-viewer"
+        src="https://raw.githubusercontent.com/anfgomezmo/Test/main/knight_with_cape_auto-rigged_idle__walk__run.glb"
+        alt="Visualización 3D de mi producto"
+        ar
+        ar-modes="scene-viewer webxr quick-look"
+        ar-scale="auto"
+        camera-controls
+        auto-rotate>
+
+        <button slot="ar-button" id="ar-button">
+            📦 Ver en tu espacio
+        </button>
+    </model-viewer>
+    <p id="status" role="status" aria-live="polite">Cargando el modelo 3D…</p>
+    <p id="ar-help-links" hidden>
+        Comprueba que Google y Servicios de Google Play para RA estén instalados y actualizados.
+        <a href="https://play.google.com/store/apps/details?id=com.google.android.googlequicksearchbox">Actualizar Google</a> ·
+        <a href="https://play.google.com/store/apps/details?id=com.google.ar.core">Actualizar ARCore</a>
+    </p>
     <script>
-        window.RA_PROJECT = {
-        "runtime": "ra-free-runtime",
-        "version": 1,
-        "marker": "./marker.mind",
-        "paidViewerUrl": "https://realidad-aumentada.com.co/WebARStudioPro.html",
-        "lighting": {
-                "exposure": 1,
-                "directionalPosition": {
-                        "x": 1,
-                        "y": 1,
-                        "z": 5
-                }
-        },
-        "models": [],
-        "videos": [
-                {
-                        "src": "./video_1.mp4",
-                        "name": "Nisshin Seifun - 近藤 勝也 _ Studio Ghibli _Konyara_ commercial (2012).mp4",
-                        "scale": 1,
-                        "aspectRatio": 1.7777777777777777,
-                        "position": {
-                                "x": 0.24,
-                                "y": 0.25,
-                                "z": 0.56
-                        },
-                        "rotation": {
-                                "x": 0,
-                                "y": 0,
-                                "z": 0
-                        }
-                }
-        ]
-};
+        const viewer = document.getElementById("product-viewer");
+        const status = document.getElementById("status");
+        const arHelpLinks = document.getElementById("ar-help-links");
+        const isHttpsPage = window.location.protocol === "https:";
+        const isAndroid = /Android/i.test(navigator.userAgent);
+
+        viewer.addEventListener("load", () => {
+            if (!isHttpsPage) {
+                status.textContent = "El modelo 3D cargó, pero AR no se inicia desde un archivo local. Abre esta página publicada con HTTPS.";
+            } else if (!viewer.canActivateAR && !isAndroid) {
+                status.textContent = "El modelo 3D cargó, pero este navegador o teléfono no ofrece AR. Prueba Chrome en un Android compatible con ARCore.";
+            } else {
+                status.textContent = "Modelo 3D listo. Pulsa «Ver en tu espacio» para probar AR.";
+            }
+        });
+
+        viewer.addEventListener("error", () => {
+            status.textContent = "No se pudo cargar el modelo. Comprueba la conexión y que el archivo GLB esté disponible públicamente.";
+        });
+
+        viewer.addEventListener("ar-status", (event) => {
+            const messages = {
+                "session-started": "Experiencia AR iniciada.",
+                "object-placed": "Modelo colocado en tu espacio.",
+                failed: "No se pudo iniciar AR. Comprueba la compatibilidad del teléfono y que Google/ARCore estén actualizados."
+            };
+            const message = messages[event.detail.status];
+            if (message) {
+                status.textContent = message;
+                if (event.detail.status === "failed") arHelpLinks.hidden = false;
+            }
+        });
     </script>
-    <script src="https://realidad-aumentada.com.co/WebARStudioPro-Free/visor-ar-free.js"></script>
-    <noscript>Activa JavaScript para ver esta experiencia de Realidad Aumentada.</noscript>
 </body>
 </html>
