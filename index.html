@@ -16,33 +16,17 @@
             box-sizing: border-box;
             background-color: #f5f5f7;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
         model-viewer {
-            position: relative;
             width: min(90vw, 1000px);
-            height: min(78vh, 760px);
+            height: 90vh;
             min-height: 320px;
             background-color: #ffffff;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .ar-help,
-        #status {
-            max-width: 1000px;
-            margin: 12px auto 0;
-            color: #333;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        #status {
-            min-height: 1.5em;
-            font-weight: bold;
         }
 
         #ar-button {
@@ -66,19 +50,11 @@
     </style>
 </head>
 <body>
-    <p class="ar-help">
-        Para probar AR, publica esta página y ábrela desde una dirección HTTPS en Chrome para Android.
-        El teléfono debe ser compatible con ARCore y tener actualizadas las aplicaciones de Google y
-        Servicios de Google Play para RA. Abrir el archivo directamente no permite iniciar AR.
-    </p>
     <model-viewer
-        id="product-viewer"
         src="./modelo.glb"
         alt="Visualización 3D de mi producto"
         ar
         ar-modes="webxr scene-viewer quick-look"
-        scene-viewer-mode="ar_preferred"
-        ar-scale="auto"
         camera-controls
         auto-rotate>
 
@@ -86,45 +62,5 @@
             📦 Ver en tu espacio
         </button>
     </model-viewer>
-    <p id="status" role="status" aria-live="polite">Cargando el modelo 3D…</p>
-    <p id="ar-help-links" hidden>
-        Comprueba que Google y Servicios de Google Play para RA estén instalados y actualizados.
-        <a href="https://play.google.com/store/apps/details?id=com.google.android.googlequicksearchbox">Actualizar Google</a> ·
-        <a href="https://play.google.com/store/apps/details?id=com.google.ar.core">Actualizar ARCore</a>
-    </p>
-    <script>
-        const viewer = document.getElementById("product-viewer");
-        const status = document.getElementById("status");
-        const arHelpLinks = document.getElementById("ar-help-links");
-        const isHttpsPage = window.location.protocol === "https:";
-        const isAndroid = /Android/i.test(navigator.userAgent);
-
-        viewer.addEventListener("load", () => {
-            if (!isHttpsPage) {
-                status.textContent = "El modelo 3D cargó, pero AR no se inicia desde un archivo local. Abre esta página publicada con HTTPS.";
-            } else if (!viewer.canActivateAR && !isAndroid) {
-                status.textContent = "El modelo 3D cargó, pero este navegador o teléfono no ofrece AR. Prueba Chrome en un Android compatible con ARCore.";
-            } else {
-                status.textContent = "Modelo 3D listo. Pulsa «Ver en tu espacio» para probar AR.";
-            }
-        });
-
-        viewer.addEventListener("error", () => {
-            status.textContent = "No se pudo cargar el modelo. Comprueba la conexión y que el archivo GLB esté disponible públicamente.";
-        });
-
-        viewer.addEventListener("ar-status", (event) => {
-            const messages = {
-                "session-started": "Experiencia AR iniciada.",
-                "object-placed": "Modelo colocado en tu espacio.",
-                failed: "No se pudo iniciar AR. Comprueba la compatibilidad del teléfono y que Google/ARCore estén actualizados."
-            };
-            const message = messages[event.detail.status];
-            if (message) {
-                status.textContent = message;
-                if (event.detail.status === "failed") arHelpLinks.hidden = false;
-            }
-        });
-    </script>
 </body>
 </html>
